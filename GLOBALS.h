@@ -10,7 +10,7 @@
 
 //Globale Variablen
 
-
+//Test des affen
 struct steps{
     unsigned int step[7];
 };
