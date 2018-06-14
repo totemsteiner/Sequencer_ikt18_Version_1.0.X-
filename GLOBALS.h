@@ -10,14 +10,12 @@
 
 //Globale Variablen
 
-//Test des affen
-struct steps{
-    unsigned int step[7];
-};
 
-char VALUE = 0;
-char VALUEMAPPED;
-#define PERIOD1 0xF4
+
+unsigned char VALUE = 0;
+int PERIOD1 = 0xF4;
+
+
 
 
 #endif	/* GLOBALS_H */
