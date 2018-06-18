@@ -28,10 +28,13 @@ void main(void) {
     IOCBF0_SetInterruptHandler(handle_slower_RB0);
     IOCBF1_SetInterruptHandler(handle_faster_RB1);
     TMR2_SetInterruptHandler(POT_multiplex);
-    TMR2_SetInterruptHandler(POT_S0_read_in);
+    void TMR2_Initialize(void);
+  
+
     while (1) {
 
-
+        
+        POT_LED_SetHigh();
 
 
     }

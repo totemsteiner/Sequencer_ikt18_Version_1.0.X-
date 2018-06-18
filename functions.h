@@ -12,33 +12,37 @@
 #include "mcc_generated_files/pin_manager.h"
 #include "GLOBALS.h"
 
-
-
-void POT_multiplex() {    
-
-    for (unsigned int i = 0; i < 8; i++) {
-        VALUE = i;
-    }
-    PORTAbits.RA2 = VALUE << 2; //POTi S0
+void POT_multiplex() {
     
-    PORTAbits.RA5 = VALUE << 5; //LED S0
+    i++;
+    
+    //VALUE = i;
+
+   //PORTAbits.RA2 = VALUE << 2; //POTi S0 - S2    
+   //PORTAbits.RA0 = VALUE << 5;
+    
+    
+    
+
+    
 }
 
 /*handle_faster() tempo einstellung, PERIOD1 wird in RP2 (PeriodRegister des T
  TMR2) geschrieben, Funktionen sind an TMR2 übergeben*/
-void handle_faster_RB1(){
-   __delay_ms(150);
+void handle_faster_RB1() {
+    __delay_ms(150);
     PERIOD1 = PERIOD1 + 10; //Hex Wert PERIOD1 wird vergroessert -> schneller
     TMR2_LoadPeriodRegister(PERIOD1);
 }
+
 /*handle_slower() tempo einstellung, PERIOD1 wird in RP2 (PeriodRegister des T
  TMR2) geschrieben, Funktionen sind an TMR2 übergeben*/
-void handle_slower_RB0(){
+void handle_slower_RB0() {
     __delay_ms(150);
     PERIOD1 = PERIOD1 - 10; //Hex Wert PERIOD1 wird verringert -> langsamer
     TMR2_LoadPeriodRegister(PERIOD1);
 }
-
+/*
 void POT_S0_read_in() {
     int conversion;
     ADC_Initialize();
@@ -48,8 +52,7 @@ void POT_S0_read_in() {
 
     conversion = ADC_GetConversion(POT_S0);
 };
-
-
+*/
 
 void gate_out() {
 

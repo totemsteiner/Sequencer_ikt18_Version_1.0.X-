@@ -53,19 +53,23 @@ void SYSTEM_Initialize(void)
     PIN_MANAGER_Initialize();
     OSCILLATOR_Initialize();
     WDT_Initialize();
-    I2C_Initialize();
     TMR2_Initialize();
+    TMR1_Initialize();
     ADC_Initialize();
 }
 
 void OSCILLATOR_Initialize(void)
 {
-    // SCS FOSC; SPLLEN disabled; IRCF 4MHz_HF; 
-    OSCCON = 0x68;
+    // SCS FOSC; SPLLEN disabled; IRCF 8MHz_HF; 
+    OSCCON = 0x70;
     // TUN 0; 
     OSCTUNE = 0x00;
     // SBOREN disabled; 
     BORCON = 0x00;
+    // Wait for PLL to stabilize
+    while(PLLR == 0)
+    {
+    }
 }
 
 void WDT_Initialize(void)

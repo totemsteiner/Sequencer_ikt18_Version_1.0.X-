@@ -12,8 +12,9 @@
 
 
 
-unsigned char VALUE = 0;
+unsigned int VALUE;
 int PERIOD1 = 0xF4;
+unsigned int i;
 
 
 

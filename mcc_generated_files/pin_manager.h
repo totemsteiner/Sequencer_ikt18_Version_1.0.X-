@@ -264,28 +264,6 @@
 #define Gate_Out_SetDigitalInput()    do { TRISCbits.TRISC2 = 1; } while(0)
 #define Gate_Out_SetDigitalOutput()   do { TRISCbits.TRISC2 = 0; } while(0)
 
-// get/set SCL aliases
-#define SCL_TRIS                 TRISCbits.TRISC3
-#define SCL_LAT                  LATCbits.LATC3
-#define SCL_PORT                 PORTCbits.RC3
-#define SCL_SetHigh()            do { LATCbits.LATC3 = 1; } while(0)
-#define SCL_SetLow()             do { LATCbits.LATC3 = 0; } while(0)
-#define SCL_Toggle()             do { LATCbits.LATC3 = ~LATCbits.LATC3; } while(0)
-#define SCL_GetValue()           PORTCbits.RC3
-#define SCL_SetDigitalInput()    do { TRISCbits.TRISC3 = 1; } while(0)
-#define SCL_SetDigitalOutput()   do { TRISCbits.TRISC3 = 0; } while(0)
-
-// get/set SDA aliases
-#define SDA_TRIS                 TRISCbits.TRISC4
-#define SDA_LAT                  LATCbits.LATC4
-#define SDA_PORT                 PORTCbits.RC4
-#define SDA_SetHigh()            do { LATCbits.LATC4 = 1; } while(0)
-#define SDA_SetLow()             do { LATCbits.LATC4 = 0; } while(0)
-#define SDA_Toggle()             do { LATCbits.LATC4 = ~LATCbits.LATC4; } while(0)
-#define SDA_GetValue()           PORTCbits.RC4
-#define SDA_SetDigitalInput()    do { TRISCbits.TRISC4 = 1; } while(0)
-#define SDA_SetDigitalOutput()   do { TRISCbits.TRISC4 = 0; } while(0)
-
 // get/set BCD8 aliases
 #define BCD8_TRIS                 TRISCbits.TRISC5
 #define BCD8_LAT                  LATCbits.LATC5
