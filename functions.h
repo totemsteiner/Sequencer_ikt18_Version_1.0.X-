@@ -12,19 +12,70 @@
 #include "mcc_generated_files/pin_manager.h"
 #include "GLOBALS.h"
 
-void POT_multiplex() {
-    
+void POT_multiplex(void) {
+
+
     i++;
-    
-    //VALUE = i;
 
-   //PORTAbits.RA2 = VALUE << 2; //POTi S0 - S2    
-   //PORTAbits.RA0 = VALUE << 5;
-    
-    
-    
+    switch (i) {
+        case 1: LED_S1_PORT = 0;
+            LED_S2_PORT = 0;
+            LED_S0_PORT = 1;
 
-    
+
+            break;
+
+        case 2:LED_S0_PORT = 0;
+            LED_S1_PORT = 1;
+
+            break;
+
+        case 3: LED_S0_PORT = 1;
+            LED_S1_PORT = 1;
+
+            break;
+
+        case 4: LED_S0_PORT = 0;
+            LED_S1_PORT = 0;
+            LED_S2_PORT = 1;
+
+            break;
+
+        case 5: LED_S0_PORT = 1;
+            LED_S2_PORT = 1;
+
+            break;
+
+        case 6: LED_S1_PORT = 1;
+            LED_S2_PORT = 1;
+
+            break;
+
+        case 7: LED_S0_PORT = 1;
+            LED_S2_PORT = 1;
+            LED_S1_PORT = 1;
+
+            break;
+
+        case 8: LED_S0_PORT = 1;
+            LED_S1_PORT = 1;
+            LED_S2_PORT = 1;
+            i = 0;
+            break;
+    }
+
+
+
+
+
+    TMR0IF = 0;
+
+
+
+
+    //PORTAbits.RA2 = VALUE << 2; //POTi S0 - S2    
+
+
 }
 
 /*handle_faster() tempo einstellung, PERIOD1 wird in RP2 (PeriodRegister des T
@@ -42,6 +93,7 @@ void handle_slower_RB0() {
     PERIOD1 = PERIOD1 - 10; //Hex Wert PERIOD1 wird verringert -> langsamer
     TMR2_LoadPeriodRegister(PERIOD1);
 }
+
 /*
 void POT_S0_read_in() {
     int conversion;
@@ -52,7 +104,7 @@ void POT_S0_read_in() {
 
     conversion = ADC_GetConversion(POT_S0);
 };
-*/
+ */
 
 void gate_out() {
 
