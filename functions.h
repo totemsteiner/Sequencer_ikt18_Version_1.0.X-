@@ -21,7 +21,22 @@ void POT_multiplex() {
     }
     PORTAbits.RA2 = VALUE << 2; //POTi S0
     
-    //PORTAbits.RA5 = VALUE; //LED S0
+    PORTAbits.RA5 = VALUE << 5; //LED S0
+}
+
+/*handle_faster() tempo einstellung, PERIOD1 wird in RP2 (PeriodRegister des T
+ TMR2) geschrieben, Funktionen sind an TMR2 übergeben*/
+void handle_faster_RB1(){
+   __delay_ms(150);
+    PERIOD1 = PERIOD1 + 10; //Hex Wert PERIOD1 wird vergroessert -> schneller
+    TMR2_LoadPeriodRegister(PERIOD1);
+}
+/*handle_slower() tempo einstellung, PERIOD1 wird in RP2 (PeriodRegister des T
+ TMR2) geschrieben, Funktionen sind an TMR2 übergeben*/
+void handle_slower_RB0(){
+    __delay_ms(150);
+    PERIOD1 = PERIOD1 - 10; //Hex Wert PERIOD1 wird verringert -> langsamer
+    TMR2_LoadPeriodRegister(PERIOD1);
 }
 
 void POT_S0_read_in() {
@@ -34,20 +49,7 @@ void POT_S0_read_in() {
     conversion = ADC_GetConversion(POT_S0);
 };
 
-void handle_faster(){
-    //PERIOD ist Startwert für PeriodRegister PR des Timers
-    //Funktion muss dann noch an Encoder übergeben werden  IOCBF0_SetInterruptHandler(handle_slower);
-    //IOCBF1_SetInterruptHandler(handle_faster);
-   __delay_ms(150); //Entprellung
-    PERIOD1 = PERIOD1 + 10;
-    TMR2_LoadPeriodRegister(PERIOD1);
-}
 
-void handle_slower(){
-    __delay_ms(150);
-    PERIOD1 = PERIOD1 - 10;
-    TMR2_LoadPeriodRegister(PERIOD1);
-}
 
 void gate_out() {
 
