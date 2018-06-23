@@ -94,7 +94,7 @@ typedef struct
 
 typedef enum
 {
-    POT_S0 =  0x0,
+    POT =  0x0,
     channel_Temp =  0x1D,
     channel_DAC =  0x1E,
     channel_FVR =  0x1F
@@ -314,22 +314,6 @@ adc_result_t ADC_GetConversion(adc_channel_t channel);
     </code>
 */
 void ADC_TemperatureAcquisitionDelay(void);
-
-/**
-  @Summary
-    Implements ISR
-
-  @Description
-    This routine is used to implement the ISR for the interrupt-driven
-    implementations.
-
-  @Returns
-    None
-
-  @Param
-    None
-*/
-void ADC_ISR(void);
 
 #ifdef __cplusplus  // Provide C++ Compatibility
 

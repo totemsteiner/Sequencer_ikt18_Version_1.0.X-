@@ -3,6 +3,7 @@
 #include "mcc_generated_files/mcc.h"
 #include "functions.h"
 #include "mcc_generated_files/adc.h"
+#include "mcc_generated_files/i2c.h"
 
 /*
                          Main application
@@ -25,18 +26,27 @@ void main(void) {
 
     // Disable the Peripheral Interrupts
     //INTERRUPT_PeripheralInterruptDisable();
-    IOCBF0_SetInterruptHandler(handle_slower_RB0);
-    IOCBF1_SetInterruptHandler(handle_faster_RB1);
+    
+    
+    TMR2_Initialize();
     TMR2_SetInterruptHandler(POT_multiplex);
-    void TMR2_Initialize(void);
-  
-
+    ADC_Initialize(); 
+    I2C_Initialize();
+    I2C_MESSAGE_STATUS status;
+    uint16_t message = 0b00001111111111111;
+    uint16_t address = 0b1100000;
+    uint16_t length = 12;
+    
     while (1) {
-
+       
+        uint16_t value = POT_read_in();
+        //INDEX = value / 7848;
+        __delay_ms(150);
+        set_timer_callback_rate(value);
+        I2C_MasterWrite(&message, length, address, &status);
         
-        POT_LED_SetHigh();
-
-
+        
+        
     }
 }
 /**

@@ -12,9 +12,16 @@
 
 
 
-unsigned int VALUE;
-int PERIOD1 = 0xF4;
-unsigned int i;
+unsigned int CURRENT_STEP_VALUE = 0;
+
+unsigned char INDEX = 0;
+unsigned char REPETITIONS = 0;
+
+unsigned char TMR2_MIN_RATE = 42;
+unsigned char TMR2_MAX_RATE = 100;
+
+unsigned int POTI_MAX = 62784;
+
 
 
 

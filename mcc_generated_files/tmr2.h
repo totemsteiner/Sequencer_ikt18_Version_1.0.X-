@@ -64,7 +64,7 @@
 /**
   Section: Macro Declarations
 */
-#define TMR2_INTERRUPT_TICKER_FACTOR    32
+uint16_t TMR2_INTERRUPT_TICKER_FACTOR = 42;
 
 /**
   Section: TMR2 APIs

@@ -58,6 +58,18 @@
 
 #define PULL_UP_ENABLED      1
 #define PULL_UP_DISABLED     0
+#define POT_TRIS                 TRISAbits.TRISA0
+#define POT_LAT                  LATAbits.LATA0
+#define POT_PORT                 PORTAbits.RA0
+#define POT_ANS                  ANSELAbits.ANSA0
+#define POT_SetHigh()            do { LATAbits.LATA0 = 1; } while(0)
+#define POT_SetLow()             do { LATAbits.LATA0 = 0; } while(0)
+#define POT_Toggle()             do { LATAbits.LATA0 = ~LATAbits.LATA0;} while(0)
+#define POT_GetValue()           PORTAbits.RA0
+#define POT_SetDigitalInput()    do { TRISAbits.TRISA0 = 1; } while(0)
+#define POT_SetDigitalOutput()   do { TRISAbits.TRISA0 = 0; } while(0)
+#define POT_SetAnalogMode()      do { ANSELAbits.ANSA0 = 1; } while(0)
+#define POT_SetDigitalMode()     do { ANSELAbits.ANSA0 = 0; } while(0)
 
 
 // get/set POT_LED aliases
@@ -116,6 +128,24 @@
 #define S2_SetAnalogMode()      do { ANSELAbits.ANSA4 = 1; } while(0)
 #define S2_SetDigitalMode()     do { ANSELAbits.ANSA4 = 0; } while(0)
 
+#define LED_S1_LAT                  LATAbits.LATA6
+#define LED_S1_PORT                 PORTAbits.RA6
+#define LED_S1_SetHigh()            do { LATAbits.LATA6 = 1; } while(0)
+#define LED_S1_SetLow()             do { LATAbits.LATA6 = 0; } while(0)
+#define LED_S1_Toggle()             do { LATAbits.LATA6 =~LATAbits.LATA6; } while(0)
+#define LED_S1_GetValue()           PORTAbits.RA6
+#define LED_S1_SetDigitalInput()    do { TRISAbits.TRISA6 = 1; }while(0)
+#define LED_S1_SetDigitalOutput()   do { TRISAbits.TRISA6 = 0; }while(0)
+
+#define LED_S0_TRIS                 TRISAbits.TRISA5
+#define LED_S0_LAT                  LATAbits.LATA5
+#define LED_S0_PORT                 PORTAbits.RA5
+#define LED_S0_SetHigh()            do { LATAbits.LATA5 = 1; } while(0)
+#define LED_S0_SetLow()             do { LATAbits.LATA5= 0; } while(0)
+#define LED_S0_Toggle()             do { LATAbits.LATA5 =~LATAbits.LATA5; } while(0)
+#define LED_S0_GetValue()           PORTAbits.RA5
+#define LED_S0_SetDigitalInput()    do { TRISAbits.TRISA5 = 1; }while(0)
+#define LED_S0_SetDigitalOutput()   do { TRISAbits.TRISA5 = 0; }while(0)
 
 
 // get/set LED_S2 aliases
@@ -264,16 +294,38 @@
 #define Gate_Out_SetDigitalInput()    do { TRISCbits.TRISC2 = 1; } while(0)
 #define Gate_Out_SetDigitalOutput()   do { TRISCbits.TRISC2 = 0; } while(0)
 
-// get/set BCD8 aliases
-#define BCD8_TRIS                 TRISCbits.TRISC5
-#define BCD8_LAT                  LATCbits.LATC5
-#define BCD8_PORT                 PORTCbits.RC5
-#define BCD8_SetHigh()            do { LATCbits.LATC5 = 1; } while(0)
-#define BCD8_SetLow()             do { LATCbits.LATC5 = 0; } while(0)
-#define BCD8_Toggle()             do { LATCbits.LATC5 = ~LATCbits.LATC5; } while(0)
-#define BCD8_GetValue()           PORTCbits.RC5
-#define BCD8_SetDigitalInput()    do { TRISCbits.TRISC5 = 1; } while(0)
-#define BCD8_SetDigitalOutput()   do { TRISCbits.TRISC5 = 0; } while(0)
+// get/set SCL aliases
+#define SCL_TRIS                 TRISCbits.TRISC3
+#define SCL_LAT                  LATCbits.LATC3
+#define SCL_PORT                 PORTCbits.RC3
+#define SCL_SetHigh()            do { LATCbits.LATC3 = 1; } while(0)
+#define SCL_SetLow()             do { LATCbits.LATC3 = 0; } while(0)
+#define SCL_Toggle()             do { LATCbits.LATC3 = ~LATCbits.LATC3; } while(0)
+#define SCL_GetValue()           PORTCbits.RC3
+#define SCL_SetDigitalInput()    do { TRISCbits.TRISC3 = 1; } while(0)
+#define SCL_SetDigitalOutput()   do { TRISCbits.TRISC3 = 0; } while(0)
+
+// get/set SDA aliases
+#define SDA_TRIS                 TRISCbits.TRISC4
+#define SDA_LAT                  LATCbits.LATC4
+#define SDA_PORT                 PORTCbits.RC4
+#define SDA_SetHigh()            do { LATCbits.LATC4 = 1; } while(0)
+#define SDA_SetLow()             do { LATCbits.LATC4 = 0; } while(0)
+#define SDA_Toggle()             do { LATCbits.LATC4 = ~LATCbits.LATC4; } while(0)
+#define SDA_GetValue()           PORTCbits.RC4
+#define SDA_SetDigitalInput()    do { TRISCbits.TRISC4 = 1; } while(0)
+#define SDA_SetDigitalOutput()   do { TRISCbits.TRISC4 = 0; } while(0)
+
+// get/set BCD_8 aliases
+#define BCD_8_TRIS                 TRISCbits.TRISC5
+#define BCD_8_LAT                  LATCbits.LATC5
+#define BCD_8_PORT                 PORTCbits.RC5
+#define BCD_8_SetHigh()            do { LATCbits.LATC5 = 1; } while(0)
+#define BCD_8_SetLow()             do { LATCbits.LATC5 = 0; } while(0)
+#define BCD_8_Toggle()             do { LATCbits.LATC5 = ~LATCbits.LATC5; } while(0)
+#define BCD_8_GetValue()           PORTCbits.RC5
+#define BCD_8_SetDigitalInput()    do { TRISCbits.TRISC5 = 1; } while(0)
+#define BCD_8_SetDigitalOutput()   do { TRISCbits.TRISC5 = 0; } while(0)
 
 // get/set Clock_Out aliases
 #define Clock_Out_TRIS                 TRISCbits.TRISC6
@@ -296,6 +348,16 @@
 #define BCD_4_GetValue()           PORTCbits.RC7
 #define BCD_4_SetDigitalInput()    do { TRISCbits.TRISC7 = 1; } while(0)
 #define BCD_4_SetDigitalOutput()   do { TRISCbits.TRISC7 = 0; } while(0)
+
+// get/set RD1 procedures
+#define RD1_SetHigh()               do { LATDbits.LATD1 = 1; } while(0)
+#define RD1_SetLow()                do { LATDbits.LATD1 = 0; } while(0)
+#define RD1_Toggle()                do { LATDbits.LATD1 = ~LATDbits.LATD1; } while(0)
+#define RD1_GetValue()              PORTDbits.RD1
+#define RD1_SetDigitalInput()       do { TRISDbits.TRISD1 = 1; } while(0)
+#define RD1_SetDigitalOutput()      do { TRISDbits.TRISD1 = 0; } while(0)
+#define RD1_SetAnalogMode()         do { ANSELDbits.ANSD1 = 1; } while(0)
+#define RD1_SetDigitalMode()        do { ANSELDbits.ANSD1 = 0; } while(0)
 
 /**
    @Param

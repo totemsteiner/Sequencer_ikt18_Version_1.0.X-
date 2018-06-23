@@ -60,7 +60,7 @@
 
 #endif
 
-#define TMR1_INTERRUPT_TICKER_FACTOR    99
+uint16_t TMR1_INTERRUPT_TICKER_FACTOR = 21;
 
 /**
   Section: TMR1 APIs
