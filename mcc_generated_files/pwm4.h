@@ -1,24 +1,24 @@
 /**
-  CCP4 Generated Driver API Header File
+  PWM4 Generated Driver File
 
   @Company
     Microchip Technology Inc.
 
   @File Name
-    ccp4.h
+    pwm4.h
 
   @Summary
-    This is the generated header file for the CCP4 driver using PIC10 / PIC12 / PIC16 / PIC18 MCUs
+    This is the generated driver implementation file for the PWM4 driver using PIC10 / PIC12 / PIC16 / PIC18 MCUs
 
   @Description
-    This header file provides APIs for driver for CCP4.
+    This header file provides implementations for driver APIs for PWM4.
     Generation Information :
         Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.65.2
         Device            :  PIC16F1937
         Driver Version    :  2.01
     The generated drivers are tested against the following:
         Compiler          :  XC8 1.45
-        MPLAB 	          :  MPLAB X 4.15
+        MPLAB             :  MPLAB X 4.15
 */
 
 /*
@@ -44,8 +44,8 @@
     SOFTWARE.
 */
 
-#ifndef CCP4_H
-#define CCP4_H
+#ifndef PWM4_H
+#define PWM4_H
 
 /**
   Section: Included Files
@@ -61,46 +61,17 @@
 
 #endif
 
-/** 
-  Section: Data type definitions
-*/
-        
 /**
- @Summary
-   Defines the values to convert from 16bit to two 8 bit and vice versa
-
- @Description
-   This routine used to get two 8 bit values from 16bit also
-   two 8 bit value are combine to get 16bit.
-
- Remarks:
-   None
- */
-
-typedef union CCPR4Reg_tag
-{
-   struct
-   {
-      uint8_t ccpr4l;
-      uint8_t ccpr4h;
-   };
-   struct
-   {
-      uint16_t ccpr4_16Bit;
-   };
-} CCP_PERIOD_REG_T ;
-
-/**
-  Section: COMPARE Module APIs
+  Section: PWM Module APIs
 */
 
 /**
   @Summary
-    Initializes the CCP4
+    Initializes the PWM4
 
   @Description
-    This routine initializes the CCP4_Initialize.
-    This routine must be called before any other CCP4 routine is called.
+    This routine initializes the PWM4 module.
+    This routine must be called before any other PWM4 routine is called.
     This routine should only be called once during system initialization.
 
   @Preconditions
@@ -115,66 +86,51 @@ typedef union CCPR4Reg_tag
   @Comment
     
 
-  @Example
+ @Example
     <code>
-    uint16_t compare;
+    uint16_t dutycycle;
 
     CCP4_Initialize();
-    CCP4_SetCompareCount(compare);
+	PWM4_LoadDutyValue(dutycycle);
     </code>
  */
-void CCP4_Initialize(void);
+void PWM4_Initialize(void);
 
 /**
   @Summary
-    Loads 16-bit compare value.
+    Loads 16-bit duty cycle.
 
   @Description
-    This routine loads the 16 bit compare value.
+    This routine loads the 16 bit duty cycle value.
 
   @Preconditions
-    CCP4_Initialize() function should have been
-    called before calling this function.
+    PWM4_Initialize() function should have been called
+    before calling this function.
 
   @Param
-    compareCount: 16-bit unsigned value
+    Pass 16bit duty cycle value.
 
   @Returns
     None
 
   @Example
     <code>
-    uint16_t compare;
+    uint16_t dutycycle;
 
-    CCP4_Initialize();
-    CCP4_SetCompareCount(compare);
+    PWM4_Initialize();
+    PWM4_LoadDutyValue(dutycycle);
     </code>
 */
-void CCP4_SetCompareCount(uint16_t compareCount);
+void PWM4_LoadDutyValue(uint16_t dutyValue);
 
-/**
-  @Summary
-    Implements ISR
-
-  @Description
-    This routine is used to implement the ISR for the interrupt-driven
-    implementations.
-
-  @Returns
-    None
-
-  @Param
-    None
-*/
-void CCP4_CompareISR(void);
-
+        
 #ifdef __cplusplus  // Provide C++ Compatibility
 
     }
 
 #endif
 
-#endif  //CCP4_H
+#endif	//PWM4_H
 /**
  End of File
 */

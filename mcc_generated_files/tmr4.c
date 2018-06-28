@@ -1,25 +1,23 @@
 /**
-  Generated Interrupt Manager Source File
+  TMR4 Generated Driver File
 
-  @Company:
+  @Company
     Microchip Technology Inc.
 
-  @File Name:
-    interrupt_manager.c
+  @File Name
+    tmr4.c
 
-  @Summary:
-    This is the Interrupt Manager file generated using PIC10 / PIC12 / PIC16 / PIC18 MCUs
+  @Summary
+    This is the generated driver implementation file for the TMR4 driver using PIC10 / PIC12 / PIC16 / PIC18 MCUs
 
-  @Description:
-    This header file provides implementations for global interrupt handling.
-    For individual peripheral handlers please see the peripheral driver for
-    all modules selected in the GUI.
+  @Description
+    This source file provides APIs for TMR4.
     Generation Information :
         Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.65.2
         Device            :  PIC16F1937
-        Driver Version    :  1.03
+        Driver Version    :  2.01
     The generated drivers are tested against the following:
-        Compiler          :  XC8 1.45 or later
+        Compiler          :  XC8 1.45
         MPLAB 	          :  MPLAB X 4.15
 */
 
@@ -46,36 +44,81 @@
     SOFTWARE.
 */
 
-#include "interrupt_manager.h"
-#include "mcc.h"
+/**
+  Section: Included Files
+*/
 
-void interrupt INTERRUPT_InterruptManager (void)
+#include <xc.h>
+#include "tmr4.h"
+
+/**
+  Section: Global Variables Definitions
+*/
+
+/**
+  Section: TMR4 APIs
+*/
+
+void TMR4_Initialize(void)
 {
-    // interrupt handler
-    if(INTCONbits.IOCIE == 1 && INTCONbits.IOCIF == 1)
+    // Set TMR4 to the options selected in the User Interface
+
+    // PR4 124; 
+    PR4 = 0x7C;
+
+    // TMR4 0; 
+    TMR4 = 0x00;
+
+    // Clearing IF flag.
+    PIR3bits.TMR4IF = 0;
+
+    // T4CKPS 1:64; T4OUTPS 1:1; TMR4ON on; 
+    T4CON = 0x07;
+}
+
+void TMR4_StartTimer(void)
+{
+    // Start the Timer by writing to TMRxON bit
+    T4CONbits.TMR4ON = 1;
+}
+
+void TMR4_StopTimer(void)
+{
+    // Stop the Timer by writing to TMRxON bit
+    T4CONbits.TMR4ON = 0;
+}
+
+uint8_t TMR4_ReadTimer(void)
+{
+    uint8_t readVal;
+
+    readVal = TMR4;
+
+    return readVal;
+}
+
+void TMR4_WriteTimer(uint8_t timerVal)
+{
+    // Write to the Timer4 register
+    TMR4 = timerVal;
+}
+
+void TMR4_LoadPeriodRegister(uint8_t periodVal)
+{
+   PR4 = periodVal;
+}
+
+bool TMR4_HasOverflowOccured(void)
+{
+    // check if  overflow has occurred by checking the TMRIF bit
+    bool status = PIR3bits.TMR4IF;
+    if(status)
     {
-        PIN_MANAGER_IOC();
+        // Clearing IF flag.
+        PIR3bits.TMR4IF = 0;
     }
-    else if(INTCONbits.PEIE == 1)
-    {
-        if(PIE2bits.BCLIE == 1 && PIR2bits.BCLIF == 1)
-        {
-            I2C_BusCollisionISR();
-        } 
-        else if(PIE1bits.SSPIE == 1 && PIR1bits.SSPIF == 1)
-        {
-            I2C_ISR();
-        } 
-        else if(PIE1bits.TMR1IE == 1 && PIR1bits.TMR1IF == 1)
-        {
-            TMR1_ISR();
-        } 
-        else if(PIE1bits.TMR2IE == 1 && PIR1bits.TMR2IF == 1)
-        {
-            TMR2_ISR();
-        } 
-    }      
+    return status;
 }
 /**
- End of File
+  End of File
 */

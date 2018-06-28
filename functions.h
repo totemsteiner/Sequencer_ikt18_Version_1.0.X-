@@ -15,10 +15,10 @@
 
 void POT_multiplex(void) {
     
-    if ( REPETITIONS == 0){
+    if ( REPETITIONS == 1){
     INDEX = ( INDEX + 1) % 8;
-    //LED Multiplexing
-    POT_LED_SetHigh();
+    
+    //LED Multiplexing    
     LED_S0_LAT = (INDEX & 0b00000001) / 1;
     LED_S1_LAT = (INDEX & 0b00000010) / 2;
     LED_S2_LAT = (INDEX & 0b00000100) / 4;   
@@ -32,7 +32,7 @@ void POT_multiplex(void) {
     CURRENT_STEP_VALUE = POT_read_in();
     
     //Einlesen des durch INDEX gemuxten DECODERS
-    REPETITIONS = 0;
+    REPETITIONS = 1;
     REPETITIONS |= BCD_1_GetValue() << 0;
     //schreibfehler bitte noch ändern!
     REPETITIONS |= BDC_2_GetValue() << 1;
@@ -41,6 +41,7 @@ void POT_multiplex(void) {
     }
     else {
         REPETITIONS--;
+        
     }
     
 }
@@ -61,6 +62,26 @@ void POT_multiplex(void) {
    
 }
 */
+
+// Calculates the ccp value for a specific duty cycle.
+// The duty cycle has to be in the range of [0, 1.0]
+uint16_t duty_to_ccp(float duty_cycle, uint16_t ccp_max_value)
+{
+    //As the ccp_min_value is always '0' the ccp value
+    //calculates very easily
+    return (uint16_t)(duty_cycle * ccp_max_value);
+}
+// Calculates the cccp value for a specific analog voltage.
+// The analog voltage has to be in the range of [0, 5.0]
+// A low pass filter can turn the PWM signal into a real
+// analog voltage
+uint16_t poti_to_ccp(uint16_t CURRENT_STEP_VALUE, uint16_t ccp_max_value)
+{
+    float f = (float)CURRENT_STEP_VALUE / (float)62784;
+    return duty_to_ccp(f, ccp_max_value);
+}
+
+
 
 //für analoges POTI
 void set_timer_callback_rate(uint16_t value){

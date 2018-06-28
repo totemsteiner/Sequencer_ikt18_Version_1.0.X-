@@ -1,17 +1,17 @@
 /**
-  CCP4 Generated Driver File
+  PWM5 Generated Driver File
 
   @Company
     Microchip Technology Inc.
 
   @File Name
-    ccp4.c
+    pwm5.c
 
   @Summary
-    This is the generated driver implementation file for the CCP4 driver using PIC10 / PIC12 / PIC16 / PIC18 MCUs
+    This is the generated driver implementation file for the PWM5 driver using PIC10 / PIC12 / PIC16 / PIC18 MCUs
 
   @Description
-    This source file provides implementations for driver APIs for CCP4.
+    This source file provides implementations for driver APIs for PWM5.
     Generation Information :
         Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.65.2
         Device            :  PIC16F1937
@@ -49,49 +49,46 @@
 */
 
 #include <xc.h>
-#include "ccp4.h"
+#include "pwm5.h"
 
 /**
-  Section: Compare Module APIs:
+  Section: Macro Declarations
 */
 
-void CCP4_Initialize(void)
+#define PWM5_INITIALIZE_DUTY_VALUE    0
+
+/**
+  Section: PWM Module APIs
+*/
+
+void PWM5_Initialize(void)
 {
-    // Set the CCP4 to the options selected in the User Interface
+    // Set the PWM5 to the options selected in the User Interface
 	
-	// CCP4M Setoutput; DC4B 0; 
-	CCP4CON = 0x08;    
+	// CCP5M PWM; DC5B 0; 
+	CCP5CON = 0x0C;    
 	
-	// CCPR4L 0; 
-	CCPR4L = 0x00;    
+	// CCPR5L 0; 
+	CCPR5L = 0x00;    
 	
-	// CCPR4H 0; 
-	CCPR4H = 0x00;    
+	// CCPR5H 0; 
+	CCPR5H = 0x00;    
 
+	// Selecting Timer 2
+	CCPTMRS1bits.C5TSEL = 0x0;
     
-    // Clear the CCP4 interrupt flag
-    PIR3bits.CCP4IF = 0;
-
-    // Enable the CCP4 interrupt
-    PIE3bits.CCP4IE = 1;
 }
 
-void CCP4_SetCompareCount(uint16_t compareCount)
+void PWM5_LoadDutyValue(uint16_t dutyValue)
 {
-    CCP_PERIOD_REG_T module;
+   // Writing to 8 MSBs of pwm duty cycle in CCPRL register
+    CCPR5L = ((dutyValue & 0x03FC)>>2);
     
-    // Write the 16-bit compare value
-    module.ccpr4_16Bit = compareCount;
-    
-    CCPR4L = module.ccpr4l;
-    CCPR4H = module.ccpr4h;
+   // Writing to 2 LSBs of pwm duty cycle in CCPCON register
+    CCP5CON = ((uint8_t)(CCP5CON & 0xCF) | ((dutyValue & 0x0003)<<4));
 }
 
-void CCP4_CompareISR(void)
-{
-    // Clear the CCP4 interrupt flag
-    PIR3bits.CCP4IF = 0;
-}
 /**
  End of File
 */
+
