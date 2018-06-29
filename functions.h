@@ -14,98 +14,121 @@
 #include "mcc_generated_files/tmr1.h"
 
 void POT_multiplex(void) {
-    
-    if ( REPETITIONS == 1){
-    INDEX = ( INDEX + 1) % 8;
-    
+
+    //if ( REPETITIONS == 1){
+    INDEX = (INDEX + 1) % 8;
+
     //LED Multiplexing    
     LED_S0_LAT = (INDEX & 0b00000001) / 1;
     LED_S1_LAT = (INDEX & 0b00000010) / 2;
-    LED_S2_LAT = (INDEX & 0b00000100) / 4;   
-    
+    LED_S2_LAT = (INDEX & 0b00000100) / 4;
+
     //POTENTIOMETER und Codierer MULTIPLEXING    
     S0_LAT = (INDEX & 0b00000001) / 1;
     S1_LAT = (INDEX & 0b00000010) / 2;
-    S2_LAT = (INDEX & 0b00000100) / 4;  
-    
+    S2_LAT = (INDEX & 0b00000100) / 4;
+
     //Einlesen des durch INDEX gemuxten POTIS
-    CURRENT_STEP_VALUE = POT_read_in();
-    
-    //Einlesen des durch INDEX gemuxten DECODERS
-    REPETITIONS = 1;
-    REPETITIONS |= BCD_1_GetValue() << 0;
-    //schreibfehler bitte noch ändern!
-    REPETITIONS |= BDC_2_GetValue() << 1;
-    REPETITIONS |= BCD_4_GetValue() << 2;
-    REPETITIONS |= BCD_8_GetValue() << 3;    
-    }
-    else {
-        REPETITIONS--;
-        
-    }
-    
+    pot_value = POT_read_in();
+    //    
+    //    //Einlesen des durch INDEX gemuxten DECODERS
+    //    REPETITIONS = 1;
+    //    REPETITIONS |= BCD_1_GetValue() << 0;
+    //    //schreibfehler bitte noch ändern!
+    //    REPETITIONS |= BDC_2_GetValue() << 1;
+    //    REPETITIONS |= BCD_4_GetValue() << 2;
+    //    REPETITIONS |= BCD_8_GetValue() << 3;    
+    //    //}
+    //    //else {
+    //        //REPETITIONS--;
+    //        
+    //    //}
+
 }
 
-/*handle_faster() tempo einstellung, PERIOD1 wird in RP2 (PeriodRegister des T
- TMR2) geschrieben, Funktionen sind an TMR2 übergeben*/
-/*void handle_faster_RB1() {
+/*
+ * handle_faster() tempo einstellung, der Interrupt  TICKER_FACTOR des TMR2
+ * wird verringert, somit wird das Tempo schneller!
+ */
+void handle_faster(void) {
     __delay_ms(150);
-    TMR2_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR + 10; //Hex Wert PERIOD1 wird vergroessert -> schneller
-    
+    TMR2_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR - 50;
+    TMR1_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR / 2;
 }
 
-/*handle_slower() tempo einstellung, PERIOD1 wird in RP2 (PeriodRegister des T
- TMR2) geschrieben, Funktionen sind an TMR2 übergeben*/
-/*void handle_slower_RB0() {
+/*
+ * handle_slower() tempo einstellung, der Interrupt  TICKER_FACTOR des TMR2
+ * wird vergroessert, somit wird das Tempo langsamer!
+ */
+void handle_slower(void) {
     __delay_ms(150);
-    TMR2_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR - 10; //Hex Wert PERIOD1 wird verringert -> langsamer
-   
+    TMR2_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR + 50;
+    TMR1_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR / 2;
 }
-*/
 
 // Calculates the ccp value for a specific duty cycle.
 // The duty cycle has to be in the range of [0, 1.0]
-uint16_t duty_to_ccp(float duty_cycle, uint16_t ccp_max_value)
-{
+
+uint16_t duty_to_ccp(float duty_cycle, uint16_t ccp_max_value) {
     //As the ccp_min_value is always '0' the ccp value
     //calculates very easily
-    return (uint16_t)(duty_cycle * ccp_max_value);
+    return (uint16_t) (duty_cycle * ccp_max_value);
 }
+
 // Calculates the cccp value for a specific analog voltage.
 // The analog voltage has to be in the range of [0, 5.0]
 // A low pass filter can turn the PWM signal into a real
 // analog voltage
-uint16_t poti_to_ccp(uint16_t CURRENT_STEP_VALUE, uint16_t ccp_max_value)
-{
-    float f = (float)CURRENT_STEP_VALUE / (float)62784;
+
+uint16_t voltage_to_ccp(float voltage, uint16_t ccp_max_value) {
+    float duty_cyle = voltage / 5.0;
+    return duty_to_ccp(duty_cyle, ccp_max_value);
+}
+
+uint16_t poti_to_ccp(uint16_t pot_value, uint16_t ccp_max_value) {
+    float f = (float) pot_value / (float) 62784;
     return duty_to_ccp(f, ccp_max_value);
 }
 
-
-
-//für analoges POTI
-void set_timer_callback_rate(uint16_t value){
-    uint8_t rate = (uint8_t)(((float)value / (float)POTI_MAX) * ((float)TMR2_MAX_RATE - (float)TMR2_MIN_RATE) + 
-            TMR2_MIN_RATE);
-    TMR2_INTERRUPT_TICKER_FACTOR = rate;
-}
-
+/*
+ * Funktion zum Einlesen der Analogwerte an PIN POT. Funktionen sind aus adc.h
+ * entnommen.
+ */
 int POT_read_in() {
-    uint16_t value;   
-    
+    uint16_t value;
+
     ADC_StartConversion(POT);
     while (!ADC_IsConversionDone());
-    value = ADC_GetConversionResult();    
+    value = ADC_GetConversionResult();
     return value;
 }
- 
-void voltage_output(){
-    Gate_Out_SetHigh();
-    TMR1_WriteTimer(0);
-    //CURRENT_STEP_VALUE in i2c message
-    
+
+void gate_out() {
+
+    Gate_Out_Toggle();
+
+    //TMR1_Reload();
 }
 
+/*
+ *Funktion zum starten und stoppen des TMR2. Damit die Logik funktioniert, muss 
+ *der START_STOP_COUNT um 1 inkrementiert werden. Die Funktion wird mit IOCRB3
+ * gesteuert.
+ */
+void handle_start_stop() {
+    __delay_ms(150);
+    START_STOP_COUNT++;
+
+    if (START_STOP_COUNT % 2 == 0) {
+        TMR2_StartTimer();
+        LED_SW1_SetHigh();
+
+    } else {
+        __delay_ms(150);
+        TMR2_StopTimer();
+        LED_SW1_SetLow();
+    }
+}
 
 
 

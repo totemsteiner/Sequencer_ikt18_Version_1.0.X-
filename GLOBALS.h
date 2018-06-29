@@ -12,7 +12,8 @@
 
 
 
-unsigned int CURRENT_STEP_VALUE = 0;
+unsigned int pot_value = 0;
+unsigned int START_STOP_COUNT = 1;
 
 unsigned char INDEX = 0;
 unsigned char REPETITIONS = 0;

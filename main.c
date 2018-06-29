@@ -27,28 +27,33 @@ void main(void) {
     // Disable the Peripheral Interrupts
     //INTERRUPT_PeripheralInterruptDisable();
     
-    
+    TMR1_Initialize();
+    TMR1_SetInterruptHandler(gate_out);
     TMR2_Initialize();
     TMR2_SetInterruptHandler(POT_multiplex);
+
+    //InterruptOnChange Taster mit entsprechenden Funktionen
+    IOCBF1_SetInterruptHandler(handle_faster);
+    IOCBF0_SetInterruptHandler(handle_slower);
+    IOCBF3_SetInterruptHandler(handle_start_stop);
+    
     ADC_Initialize(); 
     TMR4_Initialize();
     PWM4_Initialize();
+    TMR2_StopTimer();
+    POT_LED_SetLow();
     
-   
-
-    
+       
     while (1) {
+        
+        //POT_LED auf High, das ist das Signal, was am MUX U2 gemultiplext wird.
         POT_LED_SetHigh();
-        PWM4_LoadDutyValue(poti_to_ccp(CURRENT_STEP_VALUE, 499));
         
-        //set_timer_callback_rate(value);
+        //Analogwerte der Potis werden in pot_value gespeichert.
+        uint16_t pot_value = POT_read_in();
         
-          
-    
-    
-   
-        
-        
+        //pot_value wird an poti_to_ccp uebergeben, 499 ist der MAX Voltagewert
+        PWM4_LoadDutyValue(poti_to_ccp(pot_value, 499));       
     }
 }
 /**

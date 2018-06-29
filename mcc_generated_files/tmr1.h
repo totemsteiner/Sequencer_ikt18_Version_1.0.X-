@@ -53,6 +53,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include "tmr2.h"
 
 #ifdef __cplusplus  // Provide C++ Compatibility
 
