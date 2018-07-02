@@ -279,7 +279,7 @@
 #define BDC_2_SetHigh()            do { LATCbits.LATC1 = 1; } while(0)
 #define BDC_2_SetLow()             do { LATCbits.LATC1 = 0; } while(0)
 #define BDC_2_Toggle()             do { LATCbits.LATC1 = ~LATCbits.LATC1; } while(0)
-#define BDC_2_GetValue()           PORTCbits.RC1
+#define BCD_2_GetValue()           PORTCbits.RC1
 #define BDC_2_SetDigitalInput()    do { TRISCbits.TRISC1 = 1; } while(0)
 #define BDC_2_SetDigitalOutput()   do { TRISCbits.TRISC1 = 0; } while(0)
 

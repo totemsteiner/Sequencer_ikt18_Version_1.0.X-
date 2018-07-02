@@ -13,37 +13,67 @@
 #include "mcc_generated_files/tmr2.h"
 #include "mcc_generated_files/tmr1.h"
 
+uint16_t poti_to_ccp(uint16_t POT_VALUE, uint16_t ccp_max_value);
+void gate_out();
+
 void POT_multiplex(void) {
 
-    //if ( REPETITIONS == 1){
-    INDEX = (INDEX + 1) % 8;
+    if (REPETITIONS > 0) {
+        
+        REPETITIONS--;        
+        //POT_VALUE wird an poti_to_ccp uebergeben, 499 ist der MAX Voltagewert
+        Gate_Out_SetHigh();
+        PWM4_LoadDutyValue(poti_to_ccp(POT_VALUE, 499));
+        TMR1_StartTimer();
+        
+        
+        
+    }
+    else {
+        PREINDEX = (PREINDEX + 1) % 8;
+        INDEX = 8 - PREINDEX;
+        POT_LED_SetHigh();
+        //LED Multiplexing    
+        LED_S0_LAT = (INDEX & 0b00000001) / 1;
+        LED_S1_LAT = (INDEX & 0b00000010) / 2;
+        LED_S2_LAT = (INDEX & 0b00000100) / 4;
 
-    //LED Multiplexing    
-    LED_S0_LAT = (INDEX & 0b00000001) / 1;
-    LED_S1_LAT = (INDEX & 0b00000010) / 2;
-    LED_S2_LAT = (INDEX & 0b00000100) / 4;
+        //POTENTIOMETER und Codierer MULTIPLEXING    
+        S0_LAT = (INDEX & 0b00000001) / 1;
+        S1_LAT = (INDEX & 0b00000010) / 2;
+        S2_LAT = (INDEX & 0b00000100) / 4;
 
-    //POTENTIOMETER und Codierer MULTIPLEXING    
-    S0_LAT = (INDEX & 0b00000001) / 1;
-    S1_LAT = (INDEX & 0b00000010) / 2;
-    S2_LAT = (INDEX & 0b00000100) / 4;
+        //Einlesen des durch INDEX gemuxten POTIS
+        POT_VALUE = POT_read_in();
+        
+        REPETITIONS = 0;
+        REPETITIONS |= BCD_1_GetValue() << 0;
+        REPETITIONS |= BCD_2_GetValue() << 1;
+        REPETITIONS |= BCD_4_GetValue() << 2;
+        REPETITIONS |= BCD_8_GetValue() << 3;
+       
+    }
 
-    //Einlesen des durch INDEX gemuxten POTIS
-    pot_value = POT_read_in();
-    //    
-    //    //Einlesen des durch INDEX gemuxten DECODERS
-    //    REPETITIONS = 1;
-    //    REPETITIONS |= BCD_1_GetValue() << 0;
-    //    //schreibfehler bitte noch ändern!
-    //    REPETITIONS |= BDC_2_GetValue() << 1;
-    //    REPETITIONS |= BCD_4_GetValue() << 2;
-    //    REPETITIONS |= BCD_8_GetValue() << 3;    
-    //    //}
-    //    //else {
-    //        //REPETITIONS--;
-    //        
-    //    //}
 
+}
+
+void handle_pot_movement(void) {
+    if (POT_STATE == FASTER) {
+        // 13 als minimaler Wert um eine Gesamtdurchlaufzeit von 500ms
+        // zu erhalten
+        if (TMR2_INTERRUPT_TICKER_FACTOR > 13) {
+            TMR2_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR - 1;
+            TMR1_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR / 2;
+        }
+    }
+    if (POT_STATE == SLOWER) {
+        if (POT_STATE < 800) {
+            TMR2_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR + 1;
+            TMR1_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR / 2;
+        }
+    }
+    POT_STATE = IDLE;
+    return;
 }
 
 /*
@@ -51,9 +81,12 @@ void POT_multiplex(void) {
  * wird verringert, somit wird das Tempo schneller!
  */
 void handle_faster(void) {
-    __delay_ms(150);
-    TMR2_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR - 50;
-    TMR1_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR / 2;
+    if (POT_STATE == IDLE) {
+        POT_STATE = FASTER;
+        __delay_ms(5);
+    } else {
+        handle_pot_movement();
+    }
 }
 
 /*
@@ -61,9 +94,14 @@ void handle_faster(void) {
  * wird vergroessert, somit wird das Tempo langsamer!
  */
 void handle_slower(void) {
-    __delay_ms(150);
-    TMR2_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR + 50;
-    TMR1_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR / 2;
+    if (POT_STATE == IDLE) {
+        POT_STATE = SLOWER;
+        __delay_ms(5);
+    } else {
+        handle_pot_movement();
+    }
+    //TMR2_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR + 1;
+    //TMR1_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR / 2;
 }
 
 // Calculates the ccp value for a specific duty cycle.
@@ -85,8 +123,8 @@ uint16_t voltage_to_ccp(float voltage, uint16_t ccp_max_value) {
     return duty_to_ccp(duty_cyle, ccp_max_value);
 }
 
-uint16_t poti_to_ccp(uint16_t pot_value, uint16_t ccp_max_value) {
-    float f = (float) pot_value / (float) 62784;
+uint16_t poti_to_ccp(uint16_t POT_VALUE, uint16_t ccp_max_value) {
+    float f = (float) POT_VALUE / (float) 62784;
     return duty_to_ccp(f, ccp_max_value);
 }
 
@@ -104,10 +142,10 @@ int POT_read_in() {
 }
 
 void gate_out() {
-
-    Gate_Out_Toggle();
-
-    //TMR1_Reload();
+    // Setze gate out auf low, es wird von POT_multiplex
+    // auf high gesetzt
+    Gate_Out_SetLow();
+    TMR1_StopTimer();
 }
 
 /*
@@ -121,11 +159,12 @@ void handle_start_stop() {
 
     if (START_STOP_COUNT % 2 == 0) {
         TMR2_StartTimer();
+        TMR1_StartTimer();
         LED_SW1_SetHigh();
 
     } else {
-        __delay_ms(150);
         TMR2_StopTimer();
+        TMR1_StopTimer();
         LED_SW1_SetLow();
     }
 }
