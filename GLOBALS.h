@@ -10,8 +10,6 @@
 
 //Globale Variablen
 
-
-
 unsigned int POT_VALUE = 0;
 unsigned int START_STOP_COUNT = 1;
 
@@ -24,7 +22,11 @@ unsigned char TMR2_MAX_RATE = 100;
 
 unsigned int POTI_MAX = 62784;
 
-enum POT_STATES {IDLE, FASTER, SLOWER};
+//eigener Datentyp für die Tempo-Funktion
+
+enum POT_STATES {
+    IDLE, FASTER, SLOWER
+};
 
 enum POT_STATES POT_STATE = IDLE;
 

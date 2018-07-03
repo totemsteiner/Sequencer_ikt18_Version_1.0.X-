@@ -4,7 +4,6 @@
 #include "functions.h"
 #include "mcc_generated_files/adc.h"
 
-
 /*
                          Main application
  */
@@ -22,10 +21,12 @@ void main(void) {
     TMR1_SetInterruptHandler(gate_out);
     TMR2_Initialize();
     TMR2_SetInterruptHandler(POT_multiplex);
+    TMR6_Initialize();
+    TMR6_SetInterruptHandler(clock_out);
 
     //InterruptOnChange Taster mit entsprechenden Funktionen
-    IOCBF1_SetInterruptHandler(handle_faster);
-    IOCBF0_SetInterruptHandler(handle_slower);
+    IOCBF0_SetInterruptHandler(handle_faster);
+    IOCBF1_SetInterruptHandler(handle_slower);
     IOCBF3_SetInterruptHandler(handle_start_stop);
     
     ADC_Initialize(); 
@@ -36,7 +37,6 @@ void main(void) {
     
        
     while (1) {
-        //POT_LED auf High, das ist das Signal, was am MUX U2 gemultiplext wird.
            
     }
 }
