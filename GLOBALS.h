@@ -14,12 +14,13 @@ unsigned int POT_VALUE = 0;
 unsigned int START_STOP_COUNT = 1;
 
 unsigned char PREINDEX = 0;
-unsigned char INDEX = 02;
+unsigned char INDEX = 0;
 unsigned char REPETITIONS = 0;
 
 unsigned char TMR2_MIN_RATE = 42;
 unsigned char TMR2_MAX_RATE = 100;
 
+//Auflösung des Schiebe potis
 unsigned int POTI_MAX = 62784;
 
 //eigener Datentyp für die Tempo-Funktion

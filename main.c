@@ -33,6 +33,7 @@ void main(void) {
     TMR4_Initialize();
     PWM4_Initialize();
     TMR1_StartTimer();
+    TMR6_StartTimer();
     TMR2_StopTimer();
     
        

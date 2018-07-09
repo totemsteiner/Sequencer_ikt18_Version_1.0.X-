@@ -46,11 +46,11 @@ void POT_multiplex(void) {
         //Einlesen des durch INDEX gemuxten POTIS
         POT_VALUE = POT_read_in();
 
-        REPETITIONS = 0;
-        REPETITIONS |= BCD_1_GetValue() << 0;
-        REPETITIONS |= BCD_2_GetValue() << 1;
-        REPETITIONS |= BCD_4_GetValue() << 2;
-        REPETITIONS |= BCD_8_GetValue() << 3;
+        REPETITIONS = 1;
+//        REPETITIONS |= BCD_1_GetValue() << 0;
+//        REPETITIONS |= BCD_2_GetValue() << 1;
+//        REPETITIONS |= BCD_4_GetValue() << 2;
+//        REPETITIONS |= BCD_8_GetValue() << 3;
         
     }
 
@@ -64,14 +64,14 @@ void handle_pot_movement(void) {
         if (TMR2_INTERRUPT_TICKER_FACTOR > 13) {
             TMR2_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR - 1;
             TMR1_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR / 2;
-            TMR6_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR;
+            TMR6_INTERRUPT_TICKER_FACTOR = TMR1_INTERRUPT_TICKER_FACTOR;
         }
     }
     if (POT_STATE == SLOWER) {
         if (POT_STATE < 800) {
             TMR2_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR + 1;
-            TMR1_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR / 2;
-            TMR6_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR;
+            TMR1_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR / 2 ;
+            TMR6_INTERRUPT_TICKER_FACTOR = TMR1_INTERRUPT_TICKER_FACTOR;
         }
     }
     POT_STATE = IDLE;
@@ -175,6 +175,7 @@ void handle_start_stop() {
 
 void clock_out() {
     Clock_Out_SetLow();
+    TMR6_StopTimer();
 }
 
 
