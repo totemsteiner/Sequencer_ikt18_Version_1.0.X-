@@ -64,7 +64,7 @@
 /**
   Section: Macro Declarations
 */
-uint16_t TMR6_INTERRUPT_TICKER_FACTOR  =  42;
+uint16_t TMR6_INTERRUPT_TICKER_FACTOR =  21;
 
 /**
   Section: TMR6 APIs

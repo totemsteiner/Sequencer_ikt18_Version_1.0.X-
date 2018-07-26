@@ -123,7 +123,7 @@ void TMR6_ISR(void)
     // clear the TMR6 interrupt flag
     PIR3bits.TMR6IF = 0;
 
-    // callback function - called every 42th pass
+    // callback function - called every 21th pass
     if (++CountCallBack >= TMR6_INTERRUPT_TICKER_FACTOR)
     {
         // ticker function call

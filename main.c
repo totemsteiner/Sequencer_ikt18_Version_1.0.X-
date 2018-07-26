@@ -19,10 +19,10 @@ void main(void) {
     
     TMR1_Initialize();
     TMR1_SetInterruptHandler(gate_out);
-    TMR2_Initialize();
-    TMR2_SetInterruptHandler(POT_multiplex);
     TMR6_Initialize();
     TMR6_SetInterruptHandler(clock_out);
+    TMR2_Initialize();
+    TMR2_SetInterruptHandler(POT_multiplex);
 
     //InterruptOnChange Taster mit entsprechenden Funktionen
     IOCBF0_SetInterruptHandler(handle_faster);

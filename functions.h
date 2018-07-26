@@ -19,41 +19,43 @@ void gate_out();
 void clock_out();
 
 void POT_multiplex(void) {
-    
-    if (REPETITIONS > 0) {
-        
-        Gate_Out_SetHigh();
-        Clock_Out_SetHigh();
-        REPETITIONS--;
-        //POT_VALUE wird an poti_to_ccp uebergeben, 499 ist der MAX Voltagewert
-        PWM4_LoadDutyValue(poti_to_ccp(POT_VALUE, 499));
-        TMR1_StartTimer();
 
-    } else {
-        PREINDEX = (PREINDEX + 1) % 8;
-        INDEX = 8 - PREINDEX;
-        POT_LED_SetHigh();
-        //LED Multiplexing    
-        LED_S0_LAT = (INDEX & 0b00000001) / 1;
-        LED_S1_LAT = (INDEX & 0b00000010) / 2;
-        LED_S2_LAT = (INDEX & 0b00000100) / 4;
+    //if (REPETITIONS == 1) {
 
-        //POTENTIOMETER und Codierer MULTIPLEXING    
-        S0_LAT = (INDEX & 0b00000001) / 1;
-        S1_LAT = (INDEX & 0b00000010) / 2;
-        S2_LAT = (INDEX & 0b00000100) / 4;
+    Gate_Out_SetHigh();
+    Clock_Out_SetHigh();
 
-        //Einlesen des durch INDEX gemuxten POTIS
-        POT_VALUE = POT_read_in();
+    //POT_VALUE wird an poti_to_ccp uebergeben, 499 ist der MAX Voltagewert
 
-        REPETITIONS = 1;
-//        REPETITIONS |= BCD_1_GetValue() << 0;
-//        REPETITIONS |= BCD_2_GetValue() << 1;
-//        REPETITIONS |= BCD_4_GetValue() << 2;
-//        REPETITIONS |= BCD_8_GetValue() << 3;
-        
-    }
 
+    // } else {
+
+    PREINDEX = (PREINDEX + 1) % 8;
+    INDEX = 8 - PREINDEX;
+    POT_LED_SetHigh();
+    //LED Multiplexing    
+    LED_S0_LAT = (INDEX & 0b00000001) / 1;
+    LED_S1_LAT = (INDEX & 0b00000010) / 2;
+    LED_S2_LAT = (INDEX & 0b00000100) / 4;
+
+    //POTENTIOMETER und Codierer MULTIPLEXING    
+    S0_LAT = (INDEX & 0b00000001) / 1;
+    S1_LAT = (INDEX & 0b00000010) / 2;
+    S2_LAT = (INDEX & 0b00000100) / 4;
+
+    //Einlesen des durch INDEX gemuxten POTIS
+    POT_VALUE = POT_read_in();
+
+    //Einlesen der Codierer mit OR-weise Verknüpfung und bit-verschiebung
+    //REPETITIONS = 1;
+    //        REPETITIONS |= BCD_1_GetValue() << 0;
+    //        REPETITIONS |= BCD_2_GetValue() << 1;
+    //        REPETITIONS |= BCD_4_GetValue() << 2;
+    //        REPETITIONS |= BCD_8_GetValue() << 3;
+    PWM4_LoadDutyValue(poti_to_ccp(POT_VALUE, 499));
+    TMR1_StartTimer();
+    REPETITIONS--;
+    // }
 
 }
 
@@ -68,9 +70,10 @@ void handle_pot_movement(void) {
         }
     }
     if (POT_STATE == SLOWER) {
+        //800 als maximaler Wert um eine Gesamtdurchlaufzeit von 1s zu erhalten
         if (POT_STATE < 800) {
             TMR2_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR + 1;
-            TMR1_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR / 2 ;
+            TMR1_INTERRUPT_TICKER_FACTOR = TMR2_INTERRUPT_TICKER_FACTOR / 2;
             TMR6_INTERRUPT_TICKER_FACTOR = TMR1_INTERRUPT_TICKER_FACTOR;
         }
     }
@@ -167,6 +170,7 @@ void handle_start_stop() {
         TMR2_StopTimer();
         TMR1_StopTimer();
         LED_SW1_SetLow();
+        Gate_Out_SetLow();
     }
 }
 
