@@ -59,6 +59,46 @@ void POT_multiplex(void) {
 
 }
 
+void POT_multiplex_clk_in(void) {
+
+    //if (REPETITIONS == 1) {
+
+    Gate_Out_SetHigh();
+    //Clock_Out_SetHigh();
+
+    //POT_VALUE wird an poti_to_ccp uebergeben, 499 ist der MAX Voltagewert
+
+
+    // } else {
+
+    PREINDEX = (PREINDEX + 1) % 8;
+    INDEX = 8 - PREINDEX;
+    POT_LED_SetHigh();
+    //LED Multiplexing    
+    LED_S0_LAT = (INDEX & 0b00000001) / 1;
+    LED_S1_LAT = (INDEX & 0b00000010) / 2;
+    LED_S2_LAT = (INDEX & 0b00000100) / 4;
+
+    //POTENTIOMETER und Codierer MULTIPLEXING    
+    S0_LAT = (INDEX & 0b00000001) / 1;
+    S1_LAT = (INDEX & 0b00000010) / 2;
+    S2_LAT = (INDEX & 0b00000100) / 4;
+
+    //Einlesen des durch INDEX gemuxten POTIS
+    POT_VALUE = POT_read_in();
+
+    //Einlesen der Codierer mit OR-weise Verknüpfung und bit-verschiebung
+    //REPETITIONS = 1;
+    //        REPETITIONS |= BCD_1_GetValue() << 0;
+    //        REPETITIONS |= BCD_2_GetValue() << 1;
+    //        REPETITIONS |= BCD_4_GetValue() << 2;
+    //        REPETITIONS |= BCD_8_GetValue() << 3;
+    PWM4_LoadDutyValue(poti_to_ccp(POT_VALUE, 499));
+    TMR1_StartTimer();
+    REPETITIONS--;
+    // }
+
+}
 void handle_pot_movement(void) {
     if (POT_STATE == FASTER) {
         // 13 als minimaler Wert um eine Gesamtdurchlaufzeit von 500ms
@@ -174,13 +214,7 @@ void handle_start_stop() {
     }
 }
 
-// Setze clock out auf low, es wird von POT_multiplex
-// auf high gesetzt
 
-void clock_out() {
-    Clock_Out_SetLow();
-    TMR6_StopTimer();
-}
 
 
 #endif	/* FUNCTIONS_H */

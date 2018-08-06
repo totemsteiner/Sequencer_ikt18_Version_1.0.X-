@@ -1,5 +1,3 @@
-
-
 #include "mcc_generated_files/mcc.h"
 #include "functions.h"
 #include "mcc_generated_files/adc.h"
@@ -19,8 +17,8 @@ void main(void) {
     
     TMR1_Initialize();
     TMR1_SetInterruptHandler(gate_out);
-    TMR6_Initialize();
-    TMR6_SetInterruptHandler(clock_out);
+    //TMR6_Initialize();
+    //TMR6_SetInterruptHandler(clock_out);
     TMR2_Initialize();
     TMR2_SetInterruptHandler(POT_multiplex);
 
@@ -28,6 +26,7 @@ void main(void) {
     IOCBF0_SetInterruptHandler(handle_faster);
     IOCBF1_SetInterruptHandler(handle_slower);
     IOCBF3_SetInterruptHandler(handle_start_stop);
+    IOCBF5_SetInterruptHandler(POT_multiplex_clk_in);
     
     ADC_Initialize(); 
     TMR4_Initialize();
